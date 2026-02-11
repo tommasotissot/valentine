@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taisia 💖 Valentine</title>
-
 <style>
 body {
   margin:0;
@@ -15,28 +14,33 @@ body {
   justify-content:center;
   align-items:center;
   position:relative;
+  background:black;
 }
 
-/* background image */
+/* background image layer */
 body::before {
   content:"";
   position:fixed;
   inset:0;
-  background:url("bg.JPG") center/cover no-repeat;
-  filter: blur(8px) brightness(0.55);
-  transform: scale(1.1);
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.35),
+      rgba(0,0,0,0.35)
+    ),
+    url("bg.jpg") center center / contain no-repeat;
+  filter: blur(4px);
 }
 
-/* floating hearts */
-.heart {
+/* soft edge fill for wide screens */
+body::after {
+  content:"";
   position:fixed;
-  bottom:-20px;
-  font-size:22px;
-  animation:floatUp linear forwards;
-  pointer-events:none;
-}
-@keyframes floatUp {
-  to { transform:translateY(-120vh); opacity:0; }
+  inset:0;
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.25),
+      rgba(0,0,0,0.45)
+    );
 }
 
 .card {
@@ -79,7 +83,20 @@ button {
   color:#e91e63;
   line-height:1.4;
 }
+
+/* floating hearts */
+.heart {
+  position:fixed;
+  bottom:-20px;
+  font-size:22px;
+  animation:floatUp linear forwards;
+  pointer-events:none;
+}
+@keyframes floatUp {
+  to { transform:translateY(-120vh); opacity:0; }
+}
 </style>
+
 </head>
 
 <body>
