@@ -9,26 +9,50 @@
 body {
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:linear-gradient(160deg,#ff7aa2,#ff4d6d);
+  height:100vh;
+  overflow:hidden;
   display:flex;
   justify-content:center;
   align-items:center;
-  height:100vh;
-  overflow:hidden;
+  position:relative;
+}
+
+/* background image */
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url("bg.JPG") center/cover no-repeat;
+  filter: blur(8px) brightness(0.55);
+  transform: scale(1.1);
+}
+
+/* floating hearts */
+.heart {
+  position:fixed;
+  bottom:-20px;
+  font-size:22px;
+  animation:floatUp linear forwards;
+  pointer-events:none;
+}
+@keyframes floatUp {
+  to { transform:translateY(-120vh); opacity:0; }
 }
 
 .card {
-  background:white;
+  position:relative;
+  z-index:2;
+  background:rgba(255,255,255,0.92);
   width:92%;
   max-width:420px;
   border-radius:22px;
   padding:26px 20px 30px;
   text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.25);
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
 }
 
 h1 { color:#e91e63; margin:6px 0; }
-p { color:#666; }
+p { color:#555; }
 
 button {
   width:100%;
@@ -40,13 +64,12 @@ button {
 }
 
 #yesBtn { background:#e91e63; color:white; }
-#musicBtn { background:#fff0f5; color:#e91e63; font-size:14px; }
 
 #noBtn {
   position:fixed;
   width:140px;
   background:#eee;
-  z-index:10;
+  z-index:5;
 }
 
 #result {
@@ -54,18 +77,7 @@ button {
   margin-top:18px;
   font-size:18px;
   color:#e91e63;
-  line-height:1.35;
-}
-
-/* hearts */
-.heart {
-  position:fixed;
-  bottom:-20px;
-  font-size:22px;
-  animation:floatUp linear forwards;
-}
-@keyframes floatUp {
-  to { transform:translateY(-120vh); opacity:0; }
+  line-height:1.4;
 }
 </style>
 </head>
@@ -74,63 +86,50 @@ button {
 
 <div class="card">
   <h1>Taisia 💖</h1>
-  <p>Will you be my Valentine —<br>even from miles away?</p>
+  <p>
+    Even if we’re far apart…<br>
+    will you be my Valentine?
+  </p>
 
-  <button id="musicBtn">🎵 Tap for romantic music</button>
   <button id="yesBtn">YES 😍</button>
 
   <div id="result">
-    Distance means nothing when it’s you 💘<br>
-    Same sky, same day, same love.<br>
+    Distance doesn’t change what I feel for you 💘<br>
+    Same day. Same sky. Same love.<br><br>
     Our Valentine is real — just measured in kilometers 🌍🌹
   </div>
 </div>
 
 <button id="noBtn">No 🙈</button>
 
-<audio id="music" preload="auto" loop>
-  <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_07d6c7c6b3.mp3" type="audio/mpeg">
-</audio>
-
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
-const music = document.getElementById("music");
-const musicBtn = document.getElementById("musicBtn");
 
-/* place NO initially */
+/* initial NO position */
 function placeNo(){
   noBtn.style.left = "55%";
   noBtn.style.top = "72%";
 }
 placeNo();
 
-/* runaway button */
+/* runaway button — iPhone safe */
 function moveNo(){
   const w = window.innerWidth - noBtn.offsetWidth - 10;
   const h = window.innerHeight - noBtn.offsetHeight - 10;
   noBtn.style.left = Math.random()*w + "px";
   noBtn.style.top = Math.random()*h + "px";
 }
+
 noBtn.addEventListener("touchstart", moveNo);
 noBtn.addEventListener("click", moveNo);
 
-/* YES */
+/* YES click */
 yesBtn.onclick = () => {
   result.style.display = "block";
   noBtn.style.display = "none";
   burst();
-};
-
-/* iPhone-safe music play */
-musicBtn.onclick = async () => {
-  try {
-    await music.play();
-    musicBtn.innerText = "🎶 Playing";
-  } catch(e) {
-    musicBtn.innerText = "Tap again ❤️";
-  }
 };
 
 /* hearts */
@@ -143,10 +142,13 @@ function heart(){
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),7000);
 }
+
 setInterval(heart,700);
 
 function burst(){
-  for(let i=0;i<25;i++) setTimeout(heart,i*60);
+  for(let i=0;i<28;i++){
+    setTimeout(heart,i*60);
+  }
 }
 </script>
 
