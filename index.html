@@ -150,13 +150,24 @@ function moveNo(){
 }
 
 /* NO press handler */
-noBtn.addEventListener("touchstart", handleNo);
-noBtn.addEventListener("click", handleNo);
-
 function handleNo(e){
+  // prevent ghost clicks
+  noBtn.style.pointerEvents = "none";
+
   moveNo();
   angryBurst(e);
+
+  // re-enable pointer events after tiny delay
+  setTimeout(() => {
+    noBtn.style.pointerEvents = "auto";
+  }, 50);
+
+  e.preventDefault(); // stop click/tap from reaching underlying elements
 }
+
+/* add both touch and click events */
+noBtn.addEventListener("touchstart", handleNo);
+noBtn.addEventListener("click", handleNo);
 
 /* angry emoji burst */
 function angryBurst(e){
