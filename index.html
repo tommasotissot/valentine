@@ -69,6 +69,7 @@ button {
   width:140px;
   background:#eee;
   z-index:5;
+  transition: left 0.15s ease, top 0.15s ease; /* smooth movement */
 }
 
 /* result text */
@@ -141,12 +142,38 @@ function placeNo(){
 }
 placeNo();
 
-/* runaway button */
-function moveNo(){
-  const w = window.innerWidth - noBtn.offsetWidth - 10;
-  const h = window.innerHeight - noBtn.offsetHeight - 10;
-  noBtn.style.left = Math.random()*w + "px";
-  noBtn.style.top = Math.random()*h + "px";
+/* smooth dodge logic */
+function moveNoSmooth(e){
+  const btnRect = noBtn.getBoundingClientRect();
+  const btnX = btnRect.left + btnRect.width/2;
+  const btnY = btnRect.top + btnRect.height/2;
+
+  const touchX = e.touches ? e.touches[0].clientX : e.clientX;
+  const touchY = e.touches ? e.touches[0].clientY : e.clientY;
+
+  let dx = btnX - touchX;
+  let dy = btnY - touchY;
+
+  // distance from finger
+  const distance = Math.sqrt(dx*dx + dy*dy);
+  const factor = Math.min(300, Math.max(100, 400 - distance)); // closer -> bigger dodge
+
+  // normalize vector
+  const angle = Math.atan2(dy, dx);
+  const moveX = Math.cos(angle) * factor;
+  const moveY = Math.sin(angle) * factor;
+
+  // calculate new position
+  let newLeft = btnRect.left + moveX;
+  let newTop = btnRect.top + moveY;
+
+  // clamp to window
+  newLeft = Math.max(10, Math.min(window.innerWidth - btnRect.width - 10, newLeft));
+  newTop = Math.max(10, Math.min(window.innerHeight - btnRect.height - 10, newTop));
+
+  // move button
+  noBtn.style.left = newLeft + "px";
+  noBtn.style.top  = newTop + "px";
 }
 
 /* NO press handler */
@@ -154,25 +181,21 @@ function handleNo(e){
   // prevent ghost clicks
   noBtn.style.pointerEvents = "none";
 
-  moveNo();
+  moveNoSmooth(e);
   angryBurst(e);
 
-  // re-enable pointer events after tiny delay
-  setTimeout(() => {
-    noBtn.style.pointerEvents = "auto";
-  }, 50);
-
-  e.preventDefault(); // stop click/tap from reaching underlying elements
+  setTimeout(() => { noBtn.style.pointerEvents = "auto"; }, 50);
+  e.preventDefault();
 }
 
 /* add both touch and click events */
 noBtn.addEventListener("touchstart", handleNo);
-noBtn.addEventListener("click", handleNo);
+noBtn.addEventListener("mousemove", handleNo); // dodge when mouse moves
+noBtn.addEventListener("click", e => e.preventDefault()); // prevent accidental clicks
 
 /* angry emoji burst */
 function angryBurst(e){
   const emojis = ["😠","😤","💢","😡"];
-
   for(let i=0;i<6;i++){
     const a = document.createElement("div");
     a.className = "angry";
