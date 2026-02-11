@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taisia ♥️ Valentine</title>
+
 <style>
 body {
   margin:0;
@@ -17,32 +18,25 @@ body {
   background:black;
 }
 
-/* background image layer */
+/* background image */
 body::before {
   content:"";
   position:fixed;
   inset:0;
   background:
-    linear-gradient(
-      rgba(0,0,0,0.35),
-      rgba(0,0,0,0.35)
-    ),
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("bg.jpg") center center / contain no-repeat;
   filter: blur(2px);
 }
 
-/* soft edge fill for wide screens */
 body::after {
   content:"";
   position:fixed;
   inset:0;
-  background:
-    linear-gradient(
-      rgba(0,0,0,0.25),
-      rgba(0,0,0,0.45)
-    );
+  background:linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.45));
 }
 
+/* card */
 .card {
   position:relative;
   z-index:2;
@@ -69,6 +63,7 @@ button {
 
 #yesBtn { background:#e91e63; color:white; }
 
+/* runaway NO button */
 #noBtn {
   position:fixed;
   width:140px;
@@ -76,6 +71,7 @@ button {
   z-index:5;
 }
 
+/* result text */
 #result {
   display:none;
   margin-top:18px;
@@ -92,11 +88,26 @@ button {
   animation:floatUp linear forwards;
   pointer-events:none;
 }
+
 @keyframes floatUp {
   to { transform:translateY(-120vh); opacity:0; }
 }
-</style>
 
+/* angry emoji pop */
+.angry {
+  position: fixed;
+  font-size: 34px;
+  z-index: 20;
+  animation: angryPop 0.9s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes angryPop {
+  0%   { transform: scale(.3); opacity:0; }
+  40%  { transform: scale(1.2); opacity:1; }
+  100% { transform: translateY(-40px) scale(.9); opacity:0; }
+}
+</style>
 </head>
 
 <body>
@@ -130,7 +141,7 @@ function placeNo(){
 }
 placeNo();
 
-/* runaway button — iPhone safe */
+/* runaway button */
 function moveNo(){
   const w = window.innerWidth - noBtn.offsetWidth - 10;
   const h = window.innerHeight - noBtn.offsetHeight - 10;
@@ -138,8 +149,34 @@ function moveNo(){
   noBtn.style.top = Math.random()*h + "px";
 }
 
-noBtn.addEventListener("touchstart", moveNo);
-noBtn.addEventListener("click", moveNo);
+/* NO press handler */
+noBtn.addEventListener("touchstart", handleNo);
+noBtn.addEventListener("click", handleNo);
+
+function handleNo(e){
+  moveNo();
+  angryBurst(e);
+}
+
+/* angry emoji burst */
+function angryBurst(e){
+  const emojis = ["😠","😤","💢","😡"];
+
+  for(let i=0;i<6;i++){
+    const a = document.createElement("div");
+    a.className = "angry";
+    a.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+    a.style.left = (x + (Math.random()*60-30)) + "px";
+    a.style.top  = (y + (Math.random()*60-30)) + "px";
+
+    document.body.appendChild(a);
+    setTimeout(()=>a.remove(), 900);
+  }
+}
 
 /* YES click */
 yesBtn.onclick = () => {
