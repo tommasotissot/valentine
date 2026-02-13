@@ -96,7 +96,7 @@ button {
 
 /* finale overlay */
 #finale {
-  position:fixed;
+  position: fixed;
   top:0;
   left:0;
   right:0;
@@ -108,11 +108,14 @@ button {
   text-align:center;
   color:white;
   font-size:28px;
-  padding:30px;
-  box-sizing:border-box; /* ensure padding doesn’t change dimensions */
   opacity:0;
   pointer-events:none;
   transition:opacity .8s ease;
+}
+
+.finale-inner {
+  padding:30px;
+  box-sizing:border-box; /* ensures padding doesn’t affect overlay size */
 }
 
 #finale.show {
@@ -163,8 +166,10 @@ button {
 </div>
 
 <div id="finale">
-  Forever yours ♥️<br>
-  No distance can change that 🌹
+  <div class="finale-inner">
+    Forever yours ♥️<br>
+    No distance can change that 🌹
+  </div>
 </div>
 
 <button id="noBtn">No 🙈</button>
@@ -299,7 +304,7 @@ yesBtn.onclick=()=>{
   confettiBurst();
   vibrate(80);
 
-  setTimeout(showFinale, 6500);
+  setTimeout(showFinale, 7500);
 };
 </script>
 
