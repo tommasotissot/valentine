@@ -73,7 +73,26 @@ button {
 #yesBtn {
   background:#e91e63;
   color:white;
-  font-weight: 700; /* bold */
+  font-weight:700;
+  transition: 
+    background .18s ease,
+    transform .08s ease,
+    box-shadow .18s ease;
+  box-shadow: 0 6px 14px rgba(233,30,99,.35);
+}
+
+/* hover (desktop) */
+#yesBtn:hover {
+  background:#f06292;           /* slightly lighter */
+  box-shadow: 0 8px 18px rgba(233,30,99,.45);
+  transform: translateY(-1px);
+}
+
+/* press / tap */
+#yesBtn:active {
+  background:#c2185b;           /* slightly darker */
+  transform: translateY(1px) scale(.98);
+  box-shadow: 0 3px 8px rgba(233,30,99,.35);
 }
 
 #noBtn {
