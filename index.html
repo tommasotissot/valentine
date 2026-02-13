@@ -173,7 +173,7 @@ function placeNo(){
   const h = noBtn.offsetHeight;
 
   noBtn.style.left = (window.innerWidth  - w)/2 + "px";
-  noBtn.style.top  = (window.innerHeight - h)/2 + "px";
+  noBtn.style.top  = "70%";
 }
 
 window.addEventListener("load", placeNo);
@@ -290,7 +290,7 @@ yesBtn.onclick=()=>{
   confettiBurst();
   vibrate(80);
 
-  setTimeout(showFinale, 5000);
+  setTimeout(showFinale, 5500);
 };
 </script>
 
