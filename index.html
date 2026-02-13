@@ -18,6 +18,7 @@ body {
   background:black;
 }
 
+/* background */
 body::before {
   content:"";
   position:fixed;
@@ -35,6 +36,7 @@ body::after {
   background:linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.45));
 }
 
+/* card */
 .card {
   position:relative;
   z-index:2;
@@ -45,6 +47,12 @@ body::after {
   padding:26px 20px 30px;
   text-align:center;
   box-shadow:0 20px 40px rgba(0,0,0,.35);
+  transition: opacity .5s ease, transform .5s ease;
+}
+
+.card.hide {
+  opacity:0;
+  transform:scale(.9);
 }
 
 h1 { color:#e91e63; margin:6px 0; }
@@ -62,7 +70,6 @@ button {
 #yesBtn {
   background:#e91e63;
   color:white;
-  transition: transform .2s ease;
 }
 
 #noBtn {
@@ -80,6 +87,27 @@ button {
   color:#e91e63;
   line-height:1.4;
   min-height:60px;
+}
+
+/* finale overlay */
+#finale {
+  position:fixed;
+  inset:0;
+  z-index:30;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:white;
+  font-size:28px;
+  padding:30px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+
+#finale.show {
+  opacity:1;
 }
 
 /* confetti */
@@ -114,7 +142,7 @@ button {
 
 <body>
 
-<div class="card">
+<div class="card" id="card">
   <h1>Taisia ♥️</h1>
   <p>
     Even if we’re far apart…<br>
@@ -122,8 +150,12 @@ button {
   </p>
 
   <button id="yesBtn">YES 😍</button>
-
   <div id="result"></div>
+</div>
+
+<div id="finale">
+  Forever yours 💞<br>
+  No distance can change that 🌹
 </div>
 
 <button id="noBtn">No 🙈</button>
@@ -132,68 +164,66 @@ button {
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
+const card = document.getElementById("card");
+const finale = document.getElementById("finale");
 
-/* initial NO position */
+/* place NO */
 function placeNo(){
-  noBtn.style.left = "55%";
-  noBtn.style.top = "72%";
+  noBtn.style.left="55%";
+  noBtn.style.top="72%";
 }
 placeNo();
 
-/* smooth dodge */
-function moveNoSmooth(e){
-  const r = noBtn.getBoundingClientRect();
-  const bx = r.left + r.width/2;
-  const by = r.top + r.height/2;
-
-  const x = e.touches ? e.touches[0].clientX : e.clientX;
-  const y = e.touches ? e.touches[0].clientY : e.clientY;
-
-  const dx = bx - x;
-  const dy = by - y;
-  const dist = Math.sqrt(dx*dx+dy*dy);
-  const force = Math.min(300, Math.max(120, 420-dist));
-  const ang = Math.atan2(dy,dx);
-
-  let nl = r.left + Math.cos(ang)*force;
-  let nt = r.top  + Math.sin(ang)*force;
-
-  nl = Math.max(10, Math.min(innerWidth-r.width-10, nl));
-  nt = Math.max(10, Math.min(innerHeight-r.height-10, nt));
-
-  noBtn.style.left = nl+"px";
-  noBtn.style.top  = nt+"px";
-}
-
-/* vibration helper */
+/* vibration */
 function vibrate(ms){
   if(navigator.vibrate) navigator.vibrate(ms);
 }
 
-/* NO handler */
+/* dodge */
+function moveNoSmooth(e){
+  const r=noBtn.getBoundingClientRect();
+  const bx=r.left+r.width/2;
+  const by=r.top+r.height/2;
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const y=e.touches?e.touches[0].clientY:e.clientY;
+
+  const dx=bx-x, dy=by-y;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const force=Math.min(300,Math.max(120,420-dist));
+  const ang=Math.atan2(dy,dx);
+
+  let nl=r.left+Math.cos(ang)*force;
+  let nt=r.top +Math.sin(ang)*force;
+
+  nl=Math.max(10,Math.min(innerWidth-r.width-10,nl));
+  nt=Math.max(10,Math.min(innerHeight-r.height-10,nt));
+
+  noBtn.style.left=nl+"px";
+  noBtn.style.top =nt+"px";
+}
+
 function handleNo(e){
   noBtn.style.pointerEvents="none";
   moveNoSmooth(e);
   angryBurst(e);
-  vibrate(30);
-  setTimeout(()=> noBtn.style.pointerEvents="auto", 60);
+  vibrate(25);
+  setTimeout(()=>noBtn.style.pointerEvents="auto",60);
   e.preventDefault();
 }
 
-noBtn.addEventListener("touchstart", handleNo);
-noBtn.addEventListener("mousemove", handleNo);
-noBtn.addEventListener("click", e=>e.preventDefault());
+noBtn.addEventListener("touchstart",handleNo);
+noBtn.addEventListener("mousemove",handleNo);
+noBtn.addEventListener("click",e=>e.preventDefault());
 
 /* angry burst */
 function angryBurst(e){
   const emojis=["😠","😤","💢","😡"];
-  const x = e.touches ? e.touches[0].clientX : e.clientX;
-  const y = e.touches ? e.touches[0].clientY : e.clientY;
-
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const y=e.touches?e.touches[0].clientY:e.clientY;
   for(let i=0;i<6;i++){
     const a=document.createElement("div");
     a.className="angry";
-    a.innerHTML=emojis[Math.random()*emojis.length|0];
+    a.innerHTML=emojis[Math.random()*4|0];
     a.style.left=(x+(Math.random()*60-30))+"px";
     a.style.top =(y+(Math.random()*60-30))+"px";
     document.body.appendChild(a);
@@ -201,58 +231,61 @@ function angryBurst(e){
   }
 }
 
-/* TYPEWRITER */
-function typeText(html, speed=35){
+/* typewriter */
+function typeText(html,speed=30){
   result.innerHTML="";
   result.style.display="block";
-
-  const tmp=document.createElement("div");
-  tmp.innerHTML=html;
-  const text=tmp.innerHTML;
   let i=0;
-
-  const timer=setInterval(()=>{
-    result.innerHTML=text.slice(0,i++);
-    if(i>text.length) clearInterval(timer);
+  const t=setInterval(()=>{
+    result.innerHTML=html.slice(0,i++);
+    if(i>html.length) clearInterval(t);
   },speed);
 }
 
-/* CONFETTI */
-const confettiShapes=["💖","✨","🌹","♥️","💘","🩷"];
-
+/* confetti */
+const shapes=["💖","✨","🌹","♥️","💘","🩷"];
 function confetti(){
   const c=document.createElement("div");
   c.className="confetti";
-  c.innerHTML=confettiShapes[Math.random()*confettiShapes.length|0];
+  c.innerHTML=shapes[Math.random()*shapes.length|0];
   c.style.left=Math.random()*100+"vw";
   c.style.animationDuration=(4+Math.random()*3)+"s";
   document.body.appendChild(c);
   setTimeout(()=>c.remove(),7000);
 }
 
-function confettiBurst(){
-  for(let i=0;i<40;i++){
-    setTimeout(confetti,i*40);
+function confettiBurst(n=40,delay=40){
+  for(let i=0;i<n;i++){
+    setTimeout(confetti,i*delay);
   }
 }
 
-/* YES click */
+/* finale */
+function showFinale(){
+  card.classList.add("hide");
+  setTimeout(()=>{
+    finale.classList.add("show");
+  },500);
+
+  // soft background pulse
+  document.body.animate(
+    [{filter:"brightness(1)"},{filter:"brightness(1.4)"},{filter:"brightness(1)"}],
+    {duration:1200}
+  );
+}
+
+/* YES */
 yesBtn.onclick=()=>{
   noBtn.style.display="none";
 
   typeText(
-    "Distance doesn’t change what I feel for you 💘<br>I’m yours — today and every day 🌹",
-    28
+    "Distance doesn’t change what I feel for you 💘<br>I’m yours — today and every day 🌹"
   );
 
   confettiBurst();
   vibrate(80);
 
-  yesBtn.animate([
-    {transform:"scale(1)"},
-    {transform:"scale(1.2)"},
-    {transform:"scale(1)"}
-  ],{duration:400});
+  setTimeout(showFinale, 2200);
 };
 </script>
 
