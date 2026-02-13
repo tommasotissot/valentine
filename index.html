@@ -154,7 +154,7 @@ button {
 </div>
 
 <div id="finale">
-  Forever yours 💞<br>
+  Forever yours ♥️<br>
   No distance can change that 🌹
 </div>
 
@@ -169,10 +169,15 @@ const finale = document.getElementById("finale");
 
 /* place NO */
 function placeNo(){
-  noBtn.style.left="55%";
-  noBtn.style.top="72%";
+  const w = noBtn.offsetWidth;
+  const h = noBtn.offsetHeight;
+
+  noBtn.style.left = (window.innerWidth  - w)/2 + "px";
+  noBtn.style.top  = (window.innerHeight - h)/2 + "px";
 }
-placeNo();
+
+window.addEventListener("load", placeNo);
+
 
 /* vibration */
 function vibrate(ms){
@@ -285,7 +290,7 @@ yesBtn.onclick=()=>{
   confettiBurst();
   vibrate(80);
 
-  setTimeout(showFinale, 4000);
+  setTimeout(showFinale, 5000);
 };
 </script>
 
